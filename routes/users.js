@@ -663,6 +663,11 @@ router.get('/get-lms-course/:studentId/:cName', verify, async (req, res) => {
 router.get('/get-lms-course-topic/:studentId/:courseId/:subjectId', verify, async (req, res) => {
   try {
     const user = await userModel.findById(req.params.studentId);
+    
+    /* Check if account is deactivated */
+    const deactivatedAcc = (user.status === "0");
+    if(deactivatedAcc) return res.status(400).send("Your account is deactivated. Kindly contact authorities.");
+    
     if(user.lmsCourse.includes(req.params.courseId)){
       topicModel.find(
         {
